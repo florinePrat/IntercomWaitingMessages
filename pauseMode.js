@@ -1,35 +1,50 @@
-function sendAutoMessageTo(conversation,alreadyContacted){
- //   $('.conversation__card__header')[index].click();
-    console.log(conversation)
+async function sendAutoMessageTo(conversation,alreadyContacted,autoMessageContentFR,autoMessageContentEN){
+    //   $('.conversation__card__header')[index].click();
+    console.log("auto message function called")
     conversation.click();
-    sleep(2000);
-    autoMessageContent=$('#autoMessageContent').children();
-  console.log(autoMessageContent)
+    await  sleep(2000);
+    console.log("auto message content get : ",autoMessageContent)
     console.log($(".composer-inbox"))
-    $(".composer-inbox")[$(".composer-inbox").length-1].prepend(autoMessageContent[0]);
-    if(!alreadyContacted){
-        var alreadyContacted = [];
+    await sleep(2000);
+    if(isFrench()){
+        $(".composer-inbox")[$(".composer-inbox").length-1].prepend(autoMessageContentFR[0]);
+    } else {
+        $(".composer-inbox")[$(".composer-inbox").length-1].prepend(autoMessageContentEN[0]);
     }
+    await sleep(2000);
+    console.log("send button is : ",$(".o__primary.btn"))
+    $(".o__primary.btn")[0].click();
     alreadyContacted.push(conversation);
+    console.log("already contacted after sending a message",alreadyContacted)
+    return alreadyContacted;
+}
+
+function isFrench() {
+    console.log("element : ",$($(".kv__pair")[1]).children().children().children())
+   let userLocation =  $($($(".kv__pair")[1]).children().children().children()[1]).attr("data-content");
+   return userLocation.includes("France");
 }
 
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 async function main(){
+    console.log("starting pause mode")
     if(!conversations){
         var conversations;
-        var lastConversation;
         var previousLastConversation;
+        var alreadyContacted=[];
         var i,j;
-        var autoMessageContent;
     }
-    autoMessageContent= localStorage.getItem("autoMessageContent");
     j = 0;
     previousLastConversation=0;
+    let autoMessageContentFR=$('#autoMessageContentFR').children().children();
+    let autoMessageContentEN=$('#autoMessageContentEN').children().children();
     while(paused && j<50){
+        console.log("iteration n°",j);
         conversations = document.getElementsByClassName("conversation__card__header");
-        await sendAutoMessageTo(conversations[1]);
+        console.log(isFrench());
+        //await sendAutoMessageTo(conversations[1]);
         if(!previousLastConversation){
             previousLastConversation = conversations[conversations.length-1];
             console.log("premiere conv recup", conversations)
@@ -38,12 +53,11 @@ async function main(){
         {
             console.log("verif premiere conv");
             i=conversations.length-1;
-            console.log(previousLastConversation.innerText!==conversations[i].innerText,"conv : " ,conversations[0]);
-            console.log(conversations);
-            while(previousLastConversation.innerText!==conversations[i].innerText){
-                if(!alreadyContacted.includes(conversations[i])) {
-                    console.log(alreadyContacted);
-                    sendAutoMessageTo(conversations[i]);
+            while(previousLastConversation==conversations[i]){
+                console.log("new message detected ");
+                if(alreadyContacted && !alreadyContacted.includes(conversations[i])) {
+                    console.log("already contacted : ",alreadyContacted);
+                     alreadyContacted = await sendAutoMessageTo(conversations[i],alreadyContacted,autoMessageContentFR,autoMessageContentEN);
                 }
                 i--
             }

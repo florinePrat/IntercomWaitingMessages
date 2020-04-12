@@ -1,0 +1,7 @@
+{
+  "name": "IntercomWaitingMessages",
+  "version": "1.0.0",
+  "dependencies": {
+    "jquery": "^3.5.0"
+  }
+}
