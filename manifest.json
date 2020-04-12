@@ -1,0 +1,33 @@
+{
+  "manifest_version": 2,
+  "name": "Intercom Waiting Messages",
+  "short_name": "IWAAM",
+  "description": "Add waiting message for paused intercom messages",
+  "version": "0.0.3",
+  "permissions": [
+    "http://*/*",
+    "https://*/*",
+    "<all_urls>",
+    "activeTab",
+    "storage"
+  ],
+  "browser_action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "128": "128.png"
+    }
+  },
+  "content_scripts": [
+    {
+      "css": [
+        "main.css"
+      ],
+      "js": [
+        "./node_modules/jquery/dist/jquery.min.js"
+      ],
+      "matches": [
+        "https://app.intercom.com/*"
+      ]
+    }
+  ]
+}
